@@ -23,13 +23,11 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
-#include "libc_private.h"
+#include <libext.h>
+#include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.1.2 */
 errno_t memmove_s(void * s1, rsize_t s1max, const void *s2, rsize_t n)

@@ -22,9 +22,9 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#ifndef _PRIVATE_LIBEXT_H
-#define _PRIVATE_LIBEXT_H
+#ifndef PRIVATE_LIBEXT_H
+#define PRIVATE_LIBEXT_H
 
 void __throw_constraint_handler_s(const char * restrict msg, int error);
 
-#endif /* _PRIVATE_LIBEXT_H */
+#endif /* PRIVATE_LIBEXT_H */

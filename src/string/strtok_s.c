@@ -23,13 +23,11 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
-#include "libc_private.h"
+#include <libext.h>
+#include <private_libext.h>
 
 static int _check_first(char a, const char *b, size_t n)
 {
@@ -46,7 +44,7 @@ static int _check_first(char a, const char *b, size_t n)
 	return (ret);
 }
 
-static void _setptr_first(char *a, size_t i, size_t max __unused, char **b)
+static void _setptr_first(char *a, size_t i, __attribute__((unused)) size_t max, char **b)
 {
 	*b = a + i;
 }
@@ -83,7 +81,7 @@ static void _setptr_next(char *a, size_t i, size_t max, char **b)
 		*b = &a[i + 1];
 }
 
-static void _setret_next(char *cur, size_t i __unused, char **ret)
+static void _setret_next(char *cur, __attribute__((unused)) size_t i, char **ret)
 {
 	*ret = cur;
 }
@@ -97,8 +95,8 @@ static void _setmax_next(rsize_t *max, size_t i, size_t lim)
 }
 
 /* ISO/IEC 9899:2011 K.3.7.3.1 */
-char *strtok_s(char * __restrict s1, rsize_t * __restrict s1max,
-    const char * __restrict s2, char ** __restrict ptr)
+char *strtok_s(char * restrict s1, rsize_t * restrict s1max,
+    const char * restrict s2, char ** restrict ptr)
 {
 	char *ret, *cur;
 	rsize_t i, lim, s2len;

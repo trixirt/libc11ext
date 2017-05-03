@@ -23,11 +23,9 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <string.h>
-#include "libc_private.h"
+#include <libext.h>
+#include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.4 */
 size_t strnlen_s(const char *s, size_t maxsize)

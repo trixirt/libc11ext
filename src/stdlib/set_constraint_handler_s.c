@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright (c) 2017 Juniper Networks.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,26 +22,29 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "namespace.h"
-#include <sys/types.h>
-#include <machine/atomic.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <pthread.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include "un-namespace.h"
-#include "libc_private.h"
+#include <libext.h>
+#include <private_libext.h>
 
 /*
  * Rationale recommends allocating new memory each time.
  */
 static constraint_handler_t *_ch = NULL;
-static pthread_mutex_t ch_lock = PTHREAD_MUTEX_INITIALIZER;
 
+#if defined (__FreeBSD__)
+static pthread_mutex_t ch_lock = PTHREAD_MUTEX_INITIALIZER;
+#define LIBEXT_LOCK()	             \
+  if (__isthreaded)                  \
+    _pthread_mutex_lock(&ch_lock);
+#define LIBEXT_UNLOCK()              \
+  if (__isthreaded)                  \
+    _pthread_mutex_unlock(&ch_lock);
+#else
+#define LIBEXT_LOCK()
+#define LIBEXT_UNLOCK()
+#endif
 constraint_handler_t
 set_constraint_handler_s(constraint_handler_t handler)
 {
@@ -51,12 +54,10 @@ set_constraint_handler_s(constraint_handler_t handler)
 	if (new == NULL)
 		return (NULL);
 	*new = handler;
-	if (__isthreaded)
-		_pthread_mutex_lock(&ch_lock);
+	LIBEXT_LOCK();
 	old = _ch;
 	_ch = new;
-	if (__isthreaded)
-		_pthread_mutex_unlock(&ch_lock);
+	LIBEXT_UNLOCK();
 	if (old == NULL) {
 		ret = NULL;
 	} else {
@@ -70,26 +71,23 @@ void
 __throw_constraint_handler_s(const char * restrict msg, errno_t error)
 {
 	constraint_handler_t ch;
-
-	if (__isthreaded)
-		_pthread_mutex_lock(&ch_lock);
+	LIBEXT_LOCK();
 	ch = _ch != NULL ? *_ch : NULL;
-	if (__isthreaded)
-		_pthread_mutex_unlock(&ch_lock);
+	LIBEXT_UNLOCK();
 	if (ch != NULL)
 		ch(msg, NULL, error);
 }
 
 void
-abort_handler_s(const char * restrict msg __unused,
-    void * restrict ptr __unused, errno_t error __unused)
+abort_handler_s(__attribute__((unused)) const char * restrict msg,
+    __attribute__((unused)) void * restrict ptr, __attribute__((unused)) errno_t error)
 {
 
 	abort();
 }
 
 void
-ignore_handler_s(const char * restrict msg __unused,
-    void * restrict ptr __unused, errno_t error __unused)
+ignore_handler_s(__attribute__((unused)) const char * restrict msg,
+    __attribute__((unused)) void * restrict ptr, __attribute__((unused)) errno_t error)
 {
 }

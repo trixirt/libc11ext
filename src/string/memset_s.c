@@ -23,14 +23,12 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "libc_private.h"
+#include <libext.h>
+#include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.1 */
 errno_t
