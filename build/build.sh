@@ -72,7 +72,19 @@ for s in $SOURCES; do
     c=`basename $s`
     b=${c%.*}
     o=$b.o
-    echo $o
+    echo "Building $o"
+
+    if [ x${IS_CLANG} = x1 ]; then
+	scan-build cc -c $CFLAGS $s -o $OBJ/$o | grep 'No bugs found' > /dev/null
+	if [ 0 != $? ]; then
+	    scan-build cc -c $CFLAGS $s -o $OBJ/$o
+	    exit 1
+	fi
+	if [ -f $OBJ/$o ]; then
+	    rm $OBJ/$o
+	fi
+    fi
+
 
     cc -c $CFLAGS $s -o $OBJ/$o
     if [ $? != 0 ]; then
