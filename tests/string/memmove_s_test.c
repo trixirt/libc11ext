@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright (c) 2017 Juniper Networks.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,13 +23,11 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libext.h>
 
 #include <atf-c.h>
 
@@ -37,7 +35,7 @@ static errno_t e;
 static const char * restrict m;
 
 void
-h(const char * restrict msg, void * restrict ptr __unused, errno_t error)
+h(const char * restrict msg, __attribute__((unused)) void * restrict ptr, errno_t error)
 {
 	e = error;
 	m = msg;

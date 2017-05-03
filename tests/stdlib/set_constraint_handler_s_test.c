@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright (c) 2017 Juniper Networks.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,11 +23,9 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
 #include <assert.h>
 #include <stdlib.h>
+#include <libext.h>
 
 #include <atf-c.h>
 
