@@ -30,10 +30,12 @@ cd $HERE
 
 SRC=`realpath $HERE/../src`
 INC=`realpath $HERE/../include`
+TEST=`realpath $HERE/../tests`
 
 S=`find $SRC -name '*.c' -o -name '*.h'`
 I=`find $INC -name '*.h'`
-SOURCES="$S $I"
+T=`find $TEST -name '*.c'`
+SOURCES="$S $I $T"
 
 for s in $SOURCES; do
     clang-format -i $s
