@@ -33,63 +33,54 @@
 
 /* s null ptr */
 ATF_TC_WITHOUT_HEAD(s_null_ptr);
-ATF_TC_BODY(s_null_ptr, tc)
-{
-	assert(strnlen_s(0, 1) == 0);
-}
+ATF_TC_BODY(s_null_ptr, tc) { assert(strnlen_s(0, 1) == 0); }
 
 /* 0 maxsize */
 ATF_TC_WITHOUT_HEAD(zero_maxsize);
-ATF_TC_BODY(zero_maxsize, tc)
-{
-	char s[2] = { 48, 0 };
+ATF_TC_BODY(zero_maxsize, tc) {
+  char s[2] = {48, 0};
 
-	assert(strnlen_s(&s[0], 0) == 0);
+  assert(strnlen_s(&s[0], 0) == 0);
 }
 
 /* short maxsize */
 ATF_TC_WITHOUT_HEAD(short_maxsize);
-ATF_TC_BODY(short_maxsize, tc)
-{
-	char s[4] = { 48, 48, 48, 0 };
+ATF_TC_BODY(short_maxsize, tc) {
+  char s[4] = {48, 48, 48, 0};
 
-	assert(strnlen_s(&s[0], 2) == 2);
+  assert(strnlen_s(&s[0], 2) == 2);
 }
 
 /* long maxsize */
 ATF_TC_WITHOUT_HEAD(long_maxsize);
-ATF_TC_BODY(long_maxsize, tc)
-{
-	char s[6] = { 48, 48, 48, 0, 48, 48 };
+ATF_TC_BODY(long_maxsize, tc) {
+  char s[6] = {48, 48, 48, 0, 48, 48};
 
-	assert(strnlen_s(&s[0], 6) == 3);
+  assert(strnlen_s(&s[0], 6) == 3);
 }
 
 /* correct maxsize */
 ATF_TC_WITHOUT_HEAD(correct_maxsize);
-ATF_TC_BODY(correct_maxsize, tc)
-{
-	char s[6] = { 48, 48, 48, 0, 48, 48 };
+ATF_TC_BODY(correct_maxsize, tc) {
+  char s[6] = {48, 48, 48, 0, 48, 48};
 
-	assert(strnlen_s(&s[0], 3) == 3);
+  assert(strnlen_s(&s[0], 3) == 3);
 }
 
 /* correct maxsize with null */
 ATF_TC_WITHOUT_HEAD(correct_maxsize_with_null);
-ATF_TC_BODY(correct_maxsize_with_null, tc)
-{
-	char s[6] = { 48, 48, 48, 0, 48, 48 };
+ATF_TC_BODY(correct_maxsize_with_null, tc) {
+  char s[6] = {48, 48, 48, 0, 48, 48};
 
-	assert(strnlen_s(&s[0], 4) == 3);
+  assert(strnlen_s(&s[0], 4) == 3);
 }
 
-ATF_TP_ADD_TCS(tp)
-{
-	ATF_TP_ADD_TC(tp, s_null_ptr);
-	ATF_TP_ADD_TC(tp, zero_maxsize);
-	ATF_TP_ADD_TC(tp, short_maxsize);
-	ATF_TP_ADD_TC(tp, long_maxsize);
-	ATF_TP_ADD_TC(tp, correct_maxsize);
-	ATF_TP_ADD_TC(tp, correct_maxsize_with_null);
-	return (atf_no_error());
+ATF_TP_ADD_TCS(tp) {
+  ATF_TP_ADD_TC(tp, s_null_ptr);
+  ATF_TP_ADD_TC(tp, zero_maxsize);
+  ATF_TP_ADD_TC(tp, short_maxsize);
+  ATF_TP_ADD_TC(tp, long_maxsize);
+  ATF_TP_ADD_TC(tp, correct_maxsize);
+  ATF_TP_ADD_TC(tp, correct_maxsize_with_null);
+  return (atf_no_error());
 }

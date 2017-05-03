@@ -32,162 +32,146 @@
 #include <atf-c.h>
 
 static errno_t e;
-static const char * restrict m;
+static const char *restrict m;
 
-void
-h(const char * restrict msg, __attribute__((unused)) void * restrict ptr, errno_t error)
-{
-	e = error;
-	m = msg;
+void h(const char *restrict msg, __attribute__((unused)) void *restrict ptr,
+       errno_t error) {
+  e = error;
+  m = msg;
 }
 
 /* null ptr */
 ATF_TC_WITHOUT_HEAD(null_ptr);
-ATF_TC_BODY(null_ptr, tc)
-{
-	assert(memset_s(0, 1, 1, 1) != 0);
-}
+ATF_TC_BODY(null_ptr, tc) { assert(memset_s(0, 1, 1, 1) != 0); }
 
 /* smax > rmax */
 ATF_TC_WITHOUT_HEAD(smax_gt_rmax);
-ATF_TC_BODY(smax_gt_rmax, tc)
-{
-	char b;
+ATF_TC_BODY(smax_gt_rmax, tc) {
+  char b;
 
-	assert(memset_s(&b, RSIZE_MAX + 1, 1, 1) != 0);
+  assert(memset_s(&b, RSIZE_MAX + 1, 1, 1) != 0);
 }
 
 /* smax < 0 */
 ATF_TC_WITHOUT_HEAD(smax_lt_zero);
-ATF_TC_BODY(smax_lt_zero, tc)
-{
-	char b;
+ATF_TC_BODY(smax_lt_zero, tc) {
+  char b;
 
-	assert(memset_s(&b, -1, 1, 1) != 0);
+  assert(memset_s(&b, -1, 1, 1) != 0);
 }
 
 /* normal */
 ATF_TC_WITHOUT_HEAD(normal);
-ATF_TC_BODY(normal, tc)
-{
-	char b;
+ATF_TC_BODY(normal, tc) {
+  char b;
 
-	b = 3;
-	assert(memset_s(&b, 1, 5, 1) == 0);
-	assert(b == 5);
+  b = 3;
+  assert(memset_s(&b, 1, 5, 1) == 0);
+  assert(b == 5);
 }
 
 /* n > rmax */
 ATF_TC_WITHOUT_HEAD(n_gt_rmax);
-ATF_TC_BODY(n_gt_rmax, tc)
-{
-	char b;
+ATF_TC_BODY(n_gt_rmax, tc) {
+  char b;
 
-	assert(memset_s(&b, 1, 1, RSIZE_MAX + 1) != 0);
+  assert(memset_s(&b, 1, 1, RSIZE_MAX + 1) != 0);
 }
 
 /* n < 0 */
 ATF_TC_WITHOUT_HEAD(n_lt_zero);
-ATF_TC_BODY(n_lt_zero, tc)
-{
-	char b;
+ATF_TC_BODY(n_lt_zero, tc) {
+  char b;
 
-	assert(memset_s(&b, 1, 1, -1) != 0);
+  assert(memset_s(&b, 1, 1, -1) != 0);
 }
 
 /* n < smax */
 ATF_TC_WITHOUT_HEAD(n_lt_smax);
-ATF_TC_BODY(n_lt_smax, tc)
-{
-	char b[3] = {1, 2, 3};
+ATF_TC_BODY(n_lt_smax, tc) {
+  char b[3] = {1, 2, 3};
 
-	assert(memset_s(&b[0], 3, 9, 1) == 0);
-	assert(b[0] == 9);
-	assert(b[1] == 2);
-	assert(b[2] == 3);
+  assert(memset_s(&b[0], 3, 9, 1) == 0);
+  assert(b[0] == 9);
+  assert(b[1] == 2);
+  assert(b[2] == 3);
 }
 
 /* n > smax */
 ATF_TC_WITHOUT_HEAD(n_gt_smax);
-ATF_TC_BODY(n_gt_smax, tc)
-{
-	char b[3] = {1, 2, 3};
+ATF_TC_BODY(n_gt_smax, tc) {
+  char b[3] = {1, 2, 3};
 
-	assert(memset_s(&b[0], 1, 9, 3) == 0);
-	assert(b[0] == 9);
-	assert(b[1] == 2);
-	assert(b[2] == 3);
+  assert(memset_s(&b[0], 1, 9, 3) == 0);
+  assert(b[0] == 9);
+  assert(b[1] == 2);
+  assert(b[2] == 3);
 }
 
 /* smax > rmax, handler */
 ATF_TC_WITHOUT_HEAD(smax_gt_rmax_handler);
-ATF_TC_BODY(smax_gt_rmax_handler, tc)
-{
-	char b;
+ATF_TC_BODY(smax_gt_rmax_handler, tc) {
+  char b;
 
-	e = 0;
-	m = NULL;
-	set_constraint_handler_s(h);
-	assert(memset_s(&b, RSIZE_MAX + 1, 1, 1) != 0);
-	assert(e > 0);
-	assert(strcmp(m, "memset_s : smax > RSIZE_MAX") == 0);
+  e = 0;
+  m = NULL;
+  set_constraint_handler_s(h);
+  assert(memset_s(&b, RSIZE_MAX + 1, 1, 1) != 0);
+  assert(e > 0);
+  assert(strcmp(m, "memset_s : smax > RSIZE_MAX") == 0);
 }
 
 /* smax < 0, handler */
 ATF_TC_WITHOUT_HEAD(smax_lt_zero_handler);
-ATF_TC_BODY(smax_lt_zero_handler, tc)
-{
-	char b;
+ATF_TC_BODY(smax_lt_zero_handler, tc) {
+  char b;
 
-	e = 0;
-	m = NULL;
-	set_constraint_handler_s(h);
-	assert(memset_s(&b, -1, 1, 1) != 0);
-	assert(e > 0);
-	assert(strcmp(m, "memset_s : smax > RSIZE_MAX") == 0);
+  e = 0;
+  m = NULL;
+  set_constraint_handler_s(h);
+  assert(memset_s(&b, -1, 1, 1) != 0);
+  assert(e > 0);
+  assert(strcmp(m, "memset_s : smax > RSIZE_MAX") == 0);
 }
 
 /* n > rmax, handler */
 ATF_TC_WITHOUT_HEAD(n_gt_rmax_handler);
-ATF_TC_BODY(n_gt_rmax_handler, tc)
-{
-	char b;
+ATF_TC_BODY(n_gt_rmax_handler, tc) {
+  char b;
 
-	e = 0;
-	m = NULL;
-	set_constraint_handler_s(h);
-	assert(memset_s(&b, 1, 1, RSIZE_MAX + 1) != 0);
-	assert(e > 0);
-	assert(strcmp(m, "memset_s : n > RSIZE_MAX") == 0);
+  e = 0;
+  m = NULL;
+  set_constraint_handler_s(h);
+  assert(memset_s(&b, 1, 1, RSIZE_MAX + 1) != 0);
+  assert(e > 0);
+  assert(strcmp(m, "memset_s : n > RSIZE_MAX") == 0);
 }
 
 /* n < 0, handler */
 ATF_TC_WITHOUT_HEAD(n_lt_zero_handler);
-ATF_TC_BODY(n_lt_zero_handler, tc)
-{
-	char b;
+ATF_TC_BODY(n_lt_zero_handler, tc) {
+  char b;
 
-	e = 0;
-	m = NULL;
-	set_constraint_handler_s(h);
-	assert(memset_s(&b, 1, 1, -1) != 0);
-	assert(e > 0);
-	assert(strcmp(m, "memset_s : n > RSIZE_MAX") == 0);
+  e = 0;
+  m = NULL;
+  set_constraint_handler_s(h);
+  assert(memset_s(&b, 1, 1, -1) != 0);
+  assert(e > 0);
+  assert(strcmp(m, "memset_s : n > RSIZE_MAX") == 0);
 }
 
-ATF_TP_ADD_TCS(tp)
-{
-	ATF_TP_ADD_TC(tp, null_ptr);
-	ATF_TP_ADD_TC(tp, smax_gt_rmax);
-	ATF_TP_ADD_TC(tp, smax_lt_zero);
-	ATF_TP_ADD_TC(tp, normal);
-	ATF_TP_ADD_TC(tp, n_gt_rmax);
-	ATF_TP_ADD_TC(tp, n_lt_zero);
-	ATF_TP_ADD_TC(tp, n_gt_smax);
-	ATF_TP_ADD_TC(tp, n_lt_smax);
-	ATF_TP_ADD_TC(tp, smax_gt_rmax_handler);
-	ATF_TP_ADD_TC(tp, smax_lt_zero_handler);
-	ATF_TP_ADD_TC(tp, n_gt_rmax_handler);
-	ATF_TP_ADD_TC(tp, n_lt_zero_handler);
-	return (atf_no_error());
+ATF_TP_ADD_TCS(tp) {
+  ATF_TP_ADD_TC(tp, null_ptr);
+  ATF_TP_ADD_TC(tp, smax_gt_rmax);
+  ATF_TP_ADD_TC(tp, smax_lt_zero);
+  ATF_TP_ADD_TC(tp, normal);
+  ATF_TP_ADD_TC(tp, n_gt_rmax);
+  ATF_TP_ADD_TC(tp, n_lt_zero);
+  ATF_TP_ADD_TC(tp, n_gt_smax);
+  ATF_TP_ADD_TC(tp, n_lt_smax);
+  ATF_TP_ADD_TC(tp, smax_gt_rmax_handler);
+  ATF_TP_ADD_TC(tp, smax_lt_zero_handler);
+  ATF_TP_ADD_TC(tp, n_gt_rmax_handler);
+  ATF_TP_ADD_TC(tp, n_lt_zero_handler);
+  return (atf_no_error());
 }

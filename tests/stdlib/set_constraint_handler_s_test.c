@@ -31,31 +31,27 @@
 
 /* null */
 ATF_TC_WITHOUT_HEAD(null_handler);
-ATF_TC_BODY(null_handler, tc)
-{
-	assert(set_constraint_handler_s(abort_handler_s) == NULL);
+ATF_TC_BODY(null_handler, tc) {
+  assert(set_constraint_handler_s(abort_handler_s) == NULL);
 }
 
 /* abort handler */
 ATF_TC_WITHOUT_HEAD(abort_handler);
-ATF_TC_BODY(abort_handler, tc)
-{
-	set_constraint_handler_s(abort_handler_s);
-	assert(set_constraint_handler_s(ignore_handler_s) == abort_handler_s);
+ATF_TC_BODY(abort_handler, tc) {
+  set_constraint_handler_s(abort_handler_s);
+  assert(set_constraint_handler_s(ignore_handler_s) == abort_handler_s);
 }
 
 /* ignore handler */
 ATF_TC_WITHOUT_HEAD(ignore_handler);
-ATF_TC_BODY(ignore_handler, tc)
-{
-	set_constraint_handler_s(ignore_handler_s);
-	assert(set_constraint_handler_s(abort_handler_s) == ignore_handler_s);
+ATF_TC_BODY(ignore_handler, tc) {
+  set_constraint_handler_s(ignore_handler_s);
+  assert(set_constraint_handler_s(abort_handler_s) == ignore_handler_s);
 }
 
-ATF_TP_ADD_TCS(tp)
-{
-	ATF_TP_ADD_TC(tp, null_handler);
-	ATF_TP_ADD_TC(tp, abort_handler);
-	ATF_TP_ADD_TC(tp, ignore_handler);
-	return (atf_no_error());
+ATF_TP_ADD_TCS(tp) {
+  ATF_TP_ADD_TC(tp, null_handler);
+  ATF_TP_ADD_TC(tp, abort_handler);
+  ATF_TP_ADD_TC(tp, ignore_handler);
+  return (atf_no_error());
 }
