@@ -28,12 +28,11 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.4 */
-size_t strnlen_s(const char *s, size_t maxsize)
-{
-	size_t ret;
+size_t strnlen_s(const char *s, size_t maxsize) {
+  size_t ret;
 
-	ret = 0;
-	if (s != NULL)
-		ret = strnlen(s, maxsize);
-	return (ret);
+  ret = 0;
+  if (s != NULL)
+    ret = strnlen(s, maxsize);
+  return (ret);
 }

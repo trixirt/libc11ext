@@ -30,43 +30,41 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.2 */
-errno_t strerror_s(char *s, rsize_t maxsize, errno_t errnum)
-{
-	errno_t ret;
-	size_t err_len;
-	char *err_str;
-	char *e = "...";
+errno_t strerror_s(char *s, rsize_t maxsize, errno_t errnum) {
+  errno_t ret;
+  size_t err_len;
+  char *err_str;
+  char *e = "...";
 
-	ret = EINVAL;
-	if (s == NULL) {
-		__throw_constraint_handler_s("strerror_s : s is NULL", ret);
-	} else if (maxsize > RSIZE_MAX) {
-		__throw_constraint_handler_s(
-		    "strerror_s : maxsize > RSIZE_MAX", ret);
-	} else if (maxsize == 0) {
-		__throw_constraint_handler_s("strerror_s : maxsize == 0", ret);
-	} else {
-		err_len = strerrorlen_s(errnum)+1;
-		err_str = strerror(errnum);
-		if (err_len <= maxsize) {
-			strcpy_s(s, err_len, err_str);
-			ret = 0;
-		} else {
-			if (maxsize < 5) {
-				strcpy_s(s, maxsize, &e[4-maxsize]);
-			} else {
-				/*
-				 * err_str is going to be truncated
-				 * use normal call
-				 */
-				strncpy(s, err_str, maxsize - 4);
-				/*
-				 * strncpy does not null terminate
-				 * so advance to end
-				 */
-				strcpy_s(&s[maxsize - 4], 4, e);
-			}
-		}
-	}
-	return (ret);
+  ret = EINVAL;
+  if (s == NULL) {
+    __throw_constraint_handler_s("strerror_s : s is NULL", ret);
+  } else if (maxsize > RSIZE_MAX) {
+    __throw_constraint_handler_s("strerror_s : maxsize > RSIZE_MAX", ret);
+  } else if (maxsize == 0) {
+    __throw_constraint_handler_s("strerror_s : maxsize == 0", ret);
+  } else {
+    err_len = strerrorlen_s(errnum) + 1;
+    err_str = strerror(errnum);
+    if (err_len <= maxsize) {
+      strcpy_s(s, err_len, err_str);
+      ret = 0;
+    } else {
+      if (maxsize < 5) {
+        strcpy_s(s, maxsize, &e[4 - maxsize]);
+      } else {
+        /*
+         * err_str is going to be truncated
+         * use normal call
+         */
+        strncpy(s, err_str, maxsize - 4);
+        /*
+         * strncpy does not null terminate
+         * so advance to end
+         */
+        strcpy_s(&s[maxsize - 4], 4, e);
+      }
+    }
+  }
+  return (ret);
 }

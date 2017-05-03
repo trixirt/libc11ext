@@ -31,31 +31,28 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.1 */
-errno_t
-memset_s(void *s, rsize_t smax, int c, rsize_t n)
-{
-	errno_t ret;
-	rsize_t lim;
-	unsigned char v;
-	volatile unsigned char *dst;
+errno_t memset_s(void *s, rsize_t smax, int c, rsize_t n) {
+  errno_t ret;
+  rsize_t lim;
+  unsigned char v;
+  volatile unsigned char *dst;
 
-	ret = EINVAL;
-	lim = smax;
-	v = (unsigned char)c;
-	dst = (unsigned char *)s;
-	if (s == NULL) {
-		__throw_constraint_handler_s("memset_s : s is NULL", ret);
-	} else if (smax > RSIZE_MAX) {
-		__throw_constraint_handler_s("memset_s : smax > RSIZE_MAX",
-		     ret);
-	} else if (n > RSIZE_MAX) {
-		__throw_constraint_handler_s("memset_s : n > RSIZE_MAX", ret);
-	} else {
-		if (n < smax)
-			lim = n;
-		while (lim > 0)
-			dst[--lim] = v;
-		ret = 0;
-	}
-	return (ret);
+  ret = EINVAL;
+  lim = smax;
+  v = (unsigned char)c;
+  dst = (unsigned char *)s;
+  if (s == NULL) {
+    __throw_constraint_handler_s("memset_s : s is NULL", ret);
+  } else if (smax > RSIZE_MAX) {
+    __throw_constraint_handler_s("memset_s : smax > RSIZE_MAX", ret);
+  } else if (n > RSIZE_MAX) {
+    __throw_constraint_handler_s("memset_s : n > RSIZE_MAX", ret);
+  } else {
+    if (n < smax)
+      lim = n;
+    while (lim > 0)
+      dst[--lim] = v;
+    ret = 0;
+  }
+  return (ret);
 }

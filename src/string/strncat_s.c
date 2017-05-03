@@ -30,68 +30,60 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.2.2 */
-errno_t strncat_s(char * restrict s1, rsize_t s1max,
-    const char * restrict s2, rsize_t n)
-{
-	rsize_t lim;
-	uintptr_t s1e, s2e;
-	errno_t ret;
-	size_t m, o;
-	int zero_fill;
+errno_t strncat_s(char *restrict s1, rsize_t s1max, const char *restrict s2,
+                  rsize_t n) {
+  rsize_t lim;
+  uintptr_t s1e, s2e;
+  errno_t ret;
+  size_t m, o;
+  int zero_fill;
 
-	ret = EINVAL;
-	zero_fill = 0;
-	if (s1 == NULL) {
-		__throw_constraint_handler_s("strncat_s : s1 is NULL", ret);
-	} else if (s1max > RSIZE_MAX) {
-		__throw_constraint_handler_s("strncat_s : s1max > RSIZE_MAX",
-		    ret);
-	} else if (s1max == 0) {
-		__throw_constraint_handler_s("strncat_s : s1max == 0", ret);
-	} else if (s2 == NULL) {
-		zero_fill = 1;
-		__throw_constraint_handler_s("strncat_s : s2 is NULL", ret);
-	} else if (n > RSIZE_MAX) {
-		zero_fill = 1;
-		__throw_constraint_handler_s("strncat_s : n > RSIZE_MAX", ret);
-	} else {
-		m = s1max - strnlen_s(s1, s1max);
-		if (m == 0) {
-			zero_fill = 1;
-			__throw_constraint_handler_s(
-			    "strncat_s : s1 is full", ret);
-		} else {
-			o = strnlen_s(s2, n);
-			if (o >= m) {
-				zero_fill = 1;
-				__throw_constraint_handler_s(
-			            "strncat_s : s1 will overflow", ret);
-			} else {
-				lim = o;
-				if (lim > 0) {
-					s1e = (uintptr_t) s1 + m;
-					s2e = (uintptr_t) s2 + o;
-					if (((uintptr_t) s1 >=
-					     (uintptr_t) s2 &&
-					     (uintptr_t) s1 < s2e) ||
-					    ((uintptr_t) s2 >=
-					     (uintptr_t) s1 &&
-					     (uintptr_t) s2 < s1e)) {
-						zero_fill = 1;
-						__throw_constraint_handler_s("strncat_s : memory overlaps", ret);
-					} else {
-						strncat(s1, s2, lim);
-						ret = 0;
-					}
-				} else {
-					/* trivial noop */
-					ret = 0;
-				}
-			}
-		}
-	}
-	/* do not zero fill on overlapping starts */
-	if (ret && zero_fill && s1 != s2)
-		s1[0] = 0;
-	return (ret);
+  ret = EINVAL;
+  zero_fill = 0;
+  if (s1 == NULL) {
+    __throw_constraint_handler_s("strncat_s : s1 is NULL", ret);
+  } else if (s1max > RSIZE_MAX) {
+    __throw_constraint_handler_s("strncat_s : s1max > RSIZE_MAX", ret);
+  } else if (s1max == 0) {
+    __throw_constraint_handler_s("strncat_s : s1max == 0", ret);
+  } else if (s2 == NULL) {
+    zero_fill = 1;
+    __throw_constraint_handler_s("strncat_s : s2 is NULL", ret);
+  } else if (n > RSIZE_MAX) {
+    zero_fill = 1;
+    __throw_constraint_handler_s("strncat_s : n > RSIZE_MAX", ret);
+  } else {
+    m = s1max - strnlen_s(s1, s1max);
+    if (m == 0) {
+      zero_fill = 1;
+      __throw_constraint_handler_s("strncat_s : s1 is full", ret);
+    } else {
+      o = strnlen_s(s2, n);
+      if (o >= m) {
+        zero_fill = 1;
+        __throw_constraint_handler_s("strncat_s : s1 will overflow", ret);
+      } else {
+        lim = o;
+        if (lim > 0) {
+          s1e = (uintptr_t)s1 + m;
+          s2e = (uintptr_t)s2 + o;
+          if (((uintptr_t)s1 >= (uintptr_t)s2 && (uintptr_t)s1 < s2e) ||
+              ((uintptr_t)s2 >= (uintptr_t)s1 && (uintptr_t)s2 < s1e)) {
+            zero_fill = 1;
+            __throw_constraint_handler_s("strncat_s : memory overlaps", ret);
+          } else {
+            strncat(s1, s2, lim);
+            ret = 0;
+          }
+        } else {
+          /* trivial noop */
+          ret = 0;
+        }
+      }
+    }
+  }
+  /* do not zero fill on overlapping starts */
+  if (ret && zero_fill && s1 != s2)
+    s1[0] = 0;
+  return (ret);
 }

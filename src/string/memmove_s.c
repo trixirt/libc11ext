@@ -30,36 +30,34 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.1.2 */
-errno_t memmove_s(void * s1, rsize_t s1max, const void *s2, rsize_t n)
-{
-	rsize_t lim;
-	errno_t ret;
-	int zero_fill;
+errno_t memmove_s(void *s1, rsize_t s1max, const void *s2, rsize_t n) {
+  rsize_t lim;
+  errno_t ret;
+  int zero_fill;
 
-	ret = EINVAL;
-	zero_fill = 0;
+  ret = EINVAL;
+  zero_fill = 0;
 
-	if (s1 == NULL) {
-		__throw_constraint_handler_s("memmove_s : s1 is NULL", ret);
-	} else if (s1max > RSIZE_MAX) {
-		__throw_constraint_handler_s("memmove_s : s1max > RSIZE_MAX",
-		    ret);
-	} else if (s2 == NULL) {
-		zero_fill = 1;
-		__throw_constraint_handler_s("memmove_s : s2 is NULL", ret);
-	} else if (n > RSIZE_MAX) {
-		zero_fill = 1;
-		__throw_constraint_handler_s("memmove_s : n > RSIZE_MAX", ret);
-	} else {
-		lim = s1max;
-		if (n < s1max)
-			lim = n;
-		/* assume trival noop */
-		ret = 0;
-		if (lim > 0)
-			memmove(s1, s2, lim);
-	}
-	if (ret && zero_fill)
-		memset_s(s1, s1max, 0, s1max);
-	return (ret);
+  if (s1 == NULL) {
+    __throw_constraint_handler_s("memmove_s : s1 is NULL", ret);
+  } else if (s1max > RSIZE_MAX) {
+    __throw_constraint_handler_s("memmove_s : s1max > RSIZE_MAX", ret);
+  } else if (s2 == NULL) {
+    zero_fill = 1;
+    __throw_constraint_handler_s("memmove_s : s2 is NULL", ret);
+  } else if (n > RSIZE_MAX) {
+    zero_fill = 1;
+    __throw_constraint_handler_s("memmove_s : n > RSIZE_MAX", ret);
+  } else {
+    lim = s1max;
+    if (n < s1max)
+      lim = n;
+    /* assume trival noop */
+    ret = 0;
+    if (lim > 0)
+      memmove(s1, s2, lim);
+  }
+  if (ret && zero_fill)
+    memset_s(s1, s1max, 0, s1max);
+  return (ret);
 }

@@ -29,124 +29,112 @@
 #include <libext.h>
 #include <private_libext.h>
 
-static int _check_first(char a, const char *b, size_t n)
-{
-	int ret;
-	size_t i;
+static int _check_first(char a, const char *b, size_t n) {
+  int ret;
+  size_t i;
 
-	ret = 1;
-	for (i = 0; i < n; i++) {
-		if (a == b[i]) {
-			ret = 0;
-			break;
-		}
-	}
-	return (ret);
+  ret = 1;
+  for (i = 0; i < n; i++) {
+    if (a == b[i]) {
+      ret = 0;
+      break;
+    }
+  }
+  return (ret);
 }
 
-static void _setptr_first(char *a, size_t i, __attribute__((unused)) size_t max, char **b)
-{
-	*b = a + i;
+static void _setptr_first(char *a, size_t i, __attribute__((unused)) size_t max,
+                          char **b) {
+  *b = a + i;
 }
 
-static void _setret_first(char *cur, size_t i, char **ret)
-{
-	*ret = &cur[i];
+static void _setret_first(char *cur, size_t i, char **ret) { *ret = &cur[i]; }
+
+static void _setmax_first(rsize_t *max, size_t i, size_t lim) {
+  *max = lim - i;
 }
 
-static void _setmax_first(rsize_t *max, size_t i, size_t lim)
-{
-	*max = lim - i;
+static int _check_next(char a, const char *b, size_t n) {
+  int ret;
+  size_t i;
+
+  ret = 0;
+  for (i = 0; i < n; i++) {
+    if (a == b[i]) {
+      ret = 1;
+      break;
+    }
+  }
+  return (ret);
 }
 
-static int _check_next(char a, const char *b, size_t n)
-{
-	int ret;
-	size_t i;
-
-	ret = 0;
-	for (i = 0; i < n; i++) {
-		if (a == b[i]) {
-			ret = 1;
-			break;
-		}
-	}
-	return (ret);
+static void _setptr_next(char *a, size_t i, size_t max, char **b) {
+  a[i] = 0;
+  if (i + 1 < max)
+    *b = &a[i + 1];
 }
 
-static void _setptr_next(char *a, size_t i, size_t max, char **b)
-{
-	a[i] = 0;
-	if (i+1 < max)
-		*b = &a[i + 1];
+static void _setret_next(char *cur, __attribute__((unused)) size_t i,
+                         char **ret) {
+  *ret = cur;
 }
 
-static void _setret_next(char *cur, __attribute__((unused)) size_t i, char **ret)
-{
-	*ret = cur;
-}
-
-static void _setmax_next(rsize_t *max, size_t i, size_t lim)
-{
-	if (i < lim)
-		*max = lim - i - 1;
-	else
-		*max = 0;
+static void _setmax_next(rsize_t *max, size_t i, size_t lim) {
+  if (i < lim)
+    *max = lim - i - 1;
+  else
+    *max = 0;
 }
 
 /* ISO/IEC 9899:2011 K.3.7.3.1 */
-char *strtok_s(char * restrict s1, rsize_t * restrict s1max,
-    const char * restrict s2, char ** restrict ptr)
-{
-	char *ret, *cur;
-	rsize_t i, lim, s2len;
-	int (*check)(char, const char *, size_t);
-	void (*setptr)(char *, size_t, size_t, char **);
-	void (*setret)(char *, size_t, char **);
-	void (*setmax)(rsize_t *, size_t, size_t);
+char *strtok_s(char *restrict s1, rsize_t *restrict s1max,
+               const char *restrict s2, char **restrict ptr) {
+  char *ret, *cur;
+  rsize_t i, lim, s2len;
+  int (*check)(char, const char *, size_t);
+  void (*setptr)(char *, size_t, size_t, char **);
+  void (*setret)(char *, size_t, char **);
+  void (*setmax)(rsize_t *, size_t, size_t);
 
-	ret = NULL;
-	if (s1max == NULL) {
-		__throw_constraint_handler_s("strtok_s : s1max is NULL",
-		    EINVAL);
-	} else if (s2 == NULL) {
-		__throw_constraint_handler_s("strtok_s : s2 is NULL", EINVAL);
-	} else if (ptr == NULL) {
-		__throw_constraint_handler_s("strtok_s : ptr is NULL", EINVAL);
-	} else if (s1 == NULL && *ptr == NULL) {
-		__throw_constraint_handler_s("strtok_s : *ptr is NULL",
-		    EINVAL);
-	} else if (*s1max > RSIZE_MAX) {
-		__throw_constraint_handler_s("strtok_s : *s1max > RSIZE_MAX",
-		    EINVAL);
-	} else {
-		s2len = strlen(s2);
-		if (s2len != 0) {
-			if (s1 != NULL) {
-				cur = s1;
-				check = _check_first;
-				setptr = _setptr_first;
-				setret = _setret_first;
-				setmax = _setmax_first;
-			} else {
-				cur = *ptr;
-				check = _check_next;
-				setptr = _setptr_next;
-				setret = _setret_next;
-				setmax = _setmax_next;
-			}
-			lim = *s1max;
-			*ptr = NULL;
-			for (i = 0; i < lim; i++) {
-				if (check(cur[i], s2, s2len)) {
-					setptr(cur, i, lim, ptr);
-					break;
-				}
-			}
-			if (i < lim)
-				setret(cur, i, &ret);
-			setmax(s1max, i, lim);
-		}
-	}
-	return (ret);
+  ret = NULL;
+  if (s1max == NULL) {
+    __throw_constraint_handler_s("strtok_s : s1max is NULL", EINVAL);
+  } else if (s2 == NULL) {
+    __throw_constraint_handler_s("strtok_s : s2 is NULL", EINVAL);
+  } else if (ptr == NULL) {
+    __throw_constraint_handler_s("strtok_s : ptr is NULL", EINVAL);
+  } else if (s1 == NULL && *ptr == NULL) {
+    __throw_constraint_handler_s("strtok_s : *ptr is NULL", EINVAL);
+  } else if (*s1max > RSIZE_MAX) {
+    __throw_constraint_handler_s("strtok_s : *s1max > RSIZE_MAX", EINVAL);
+  } else {
+    s2len = strlen(s2);
+    if (s2len != 0) {
+      if (s1 != NULL) {
+        cur = s1;
+        check = _check_first;
+        setptr = _setptr_first;
+        setret = _setret_first;
+        setmax = _setmax_first;
+      } else {
+        cur = *ptr;
+        check = _check_next;
+        setptr = _setptr_next;
+        setret = _setret_next;
+        setmax = _setmax_next;
+      }
+      lim = *s1max;
+      *ptr = NULL;
+      for (i = 0; i < lim; i++) {
+        if (check(cur[i], s2, s2len)) {
+          setptr(cur, i, lim, ptr);
+          break;
+        }
+      }
+      if (i < lim)
+        setret(cur, i, &ret);
+      setmax(s1max, i, lim);
+    }
+  }
+  return (ret);
 }

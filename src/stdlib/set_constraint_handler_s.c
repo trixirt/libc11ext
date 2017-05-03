@@ -33,61 +33,54 @@
  */
 static constraint_handler_t *_ch = NULL;
 
-#if defined (__FreeBSD__)
+#if defined(__FreeBSD__)
 static pthread_mutex_t ch_lock = PTHREAD_MUTEX_INITIALIZER;
-#define LIBEXT_LOCK()	             \
-  if (__isthreaded)                  \
+#define LIBEXT_LOCK()                                                          \
+  if (__isthreaded)                                                            \
     _pthread_mutex_lock(&ch_lock);
-#define LIBEXT_UNLOCK()              \
-  if (__isthreaded)                  \
+#define LIBEXT_UNLOCK()                                                        \
+  if (__isthreaded)                                                            \
     _pthread_mutex_unlock(&ch_lock);
 #else
 #define LIBEXT_LOCK()
 #define LIBEXT_UNLOCK()
 #endif
-constraint_handler_t
-set_constraint_handler_s(constraint_handler_t handler)
-{
-	constraint_handler_t *new, *old, ret;
+constraint_handler_t set_constraint_handler_s(constraint_handler_t handler) {
+  constraint_handler_t *new, *old, ret;
 
-	new = malloc(sizeof(constraint_handler_t));
-	if (new == NULL)
-		return (NULL);
-	*new = handler;
-	LIBEXT_LOCK();
-	old = _ch;
-	_ch = new;
-	LIBEXT_UNLOCK();
-	if (old == NULL) {
-		ret = NULL;
-	} else {
-		ret = *old;
-		free(old);
-	}
-	return (ret);
+  new = malloc(sizeof(constraint_handler_t));
+  if (new == NULL)
+    return (NULL);
+  *new = handler;
+  LIBEXT_LOCK();
+  old = _ch;
+  _ch = new;
+  LIBEXT_UNLOCK();
+  if (old == NULL) {
+    ret = NULL;
+  } else {
+    ret = *old;
+    free(old);
+  }
+  return (ret);
 }
 
-void
-__throw_constraint_handler_s(const char * restrict msg, errno_t error)
-{
-	constraint_handler_t ch;
-	LIBEXT_LOCK();
-	ch = _ch != NULL ? *_ch : NULL;
-	LIBEXT_UNLOCK();
-	if (ch != NULL)
-		ch(msg, NULL, error);
+void __throw_constraint_handler_s(const char *restrict msg, errno_t error) {
+  constraint_handler_t ch;
+  LIBEXT_LOCK();
+  ch = _ch != NULL ? *_ch : NULL;
+  LIBEXT_UNLOCK();
+  if (ch != NULL)
+    ch(msg, NULL, error);
 }
 
-void
-abort_handler_s(__attribute__((unused)) const char * restrict msg,
-    __attribute__((unused)) void * restrict ptr, __attribute__((unused)) errno_t error)
-{
+void abort_handler_s(__attribute__((unused)) const char *restrict msg,
+                     __attribute__((unused)) void *restrict ptr,
+                     __attribute__((unused)) errno_t error) {
 
-	abort();
+  abort();
 }
 
-void
-ignore_handler_s(__attribute__((unused)) const char * restrict msg,
-    __attribute__((unused)) void * restrict ptr, __attribute__((unused)) errno_t error)
-{
-}
+void ignore_handler_s(__attribute__((unused)) const char *restrict msg,
+                      __attribute__((unused)) void *restrict ptr,
+                      __attribute__((unused)) errno_t error) {}

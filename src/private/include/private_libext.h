@@ -25,6 +25,6 @@
 #ifndef PRIVATE_LIBEXT_H
 #define PRIVATE_LIBEXT_H
 
-void __throw_constraint_handler_s(const char * restrict msg, int error);
+void __throw_constraint_handler_s(const char *restrict msg, int error);
 
 #endif /* PRIVATE_LIBEXT_H */

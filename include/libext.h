@@ -26,21 +26,20 @@
 #define LIBEXT_H
 
 /* Default to enabling C11 Appendix K */
-#define	EXT1_VISIBLE		1
+#define EXT1_VISIBLE 1
 
-/* 
+/*
  * User can override __EXT1_VISIBLE by doing the equivlent of
  * #define __STDC_WANT_LIB_EXT1__ 0
  */
 #if defined(__STDC_WANT_LIB_EXT1__)
-#undef	EXT1_VISIBLE
+#undef EXT1_VISIBLE
 #if __STDC_WANT_LIB_EXT1__
-#define	EXT1_VISIBLE		1
+#define EXT1_VISIBLE 1
 #else
-#define	EXT1_VISIBLE		0
+#define EXT1_VISIBLE 0
 #endif
 #endif /* __STDC_WANT_LIB_EXT1__ */
-
 
 #if EXT1_VISIBLE
 /* errno.h */
@@ -59,35 +58,32 @@ typedef size_t rsize_t;
 
 /* stdlib.h */
 /* K.3.6 */
-typedef void (*constraint_handler_t)(const char * restrict,
-    void * restrict, errno_t);
+typedef void (*constraint_handler_t)(const char *restrict, void *restrict,
+                                     errno_t);
 /* K.3.6.1.1 */
 constraint_handler_t set_constraint_handler_s(constraint_handler_t handler);
 /* K.3.6.1.2 */
-__attribute__((noreturn)) void abort_handler_s(const char * restrict, void * restrict,
-    errno_t);
+__attribute__((noreturn)) void abort_handler_s(const char *restrict,
+                                               void *restrict, errno_t);
 /* K3.6.1.3 */
-void ignore_handler_s(const char * restrict, void * restrict, errno_t);
-
+void ignore_handler_s(const char *restrict, void *restrict, errno_t);
 
 /* string.h */
 /* ISO/IEC 9899:2011 K.3.7.1.1 */
-errno_t memcpy_s(void * restrict, rsize_t, const void * restrict, rsize_t);
+errno_t memcpy_s(void *restrict, rsize_t, const void *restrict, rsize_t);
 /* ISO/IEC 9899:2011 K.3.7.1.2 */
 errno_t memmove_s(void *, rsize_t, const void *, rsize_t);
 /* ISO/IEC 9899:2011 K.3.7.1.3 */
-errno_t strcpy_s(char * restrict, rsize_t, const char * restrict);
+errno_t strcpy_s(char *restrict, rsize_t, const char *restrict);
 /* ISO/IEC 9899:2011 K.3.7.1.4 */
-errno_t strncpy_s(char * restrict, rsize_t, const char * restrict,
-    rsize_t);
+errno_t strncpy_s(char *restrict, rsize_t, const char *restrict, rsize_t);
 /* ISO/IEC 9899:2011 K.3.7.2.1 */
-errno_t strcat_s(char * restrict, rsize_t, const char * restrict);
+errno_t strcat_s(char *restrict, rsize_t, const char *restrict);
 /* ISO/IEC 9899:2011 K.3.7.2.2 */
-errno_t strncat_s(char * restrict, rsize_t, const char * restrict,
-    rsize_t);
+errno_t strncat_s(char *restrict, rsize_t, const char *restrict, rsize_t);
 /* ISO/IEC 9899:2011 K.3.7.3.1 */
-char *strtok_s(char * restrict, rsize_t * restrict,
-    const char * restrict, char ** restrict);
+char *strtok_s(char *restrict, rsize_t *restrict, const char *restrict,
+               char **restrict);
 /* ISO/IEC 9899:2011 K.3.7.4.1 */
 errno_t memset_s(void *, rsize_t, int, rsize_t);
 /* ISO/IEC 9899:2011 K.3.7.4.2 */
@@ -97,5 +93,5 @@ size_t strerrorlen_s(errno_t);
 /* ISO/IEC 9899:2011 K.3.7.4.4 */
 size_t strnlen_s(const char *, size_t);
 
-#endif /* __EXT1_VISIBLE */
+#endif /* EXT1_VISIBLE */
 #endif /* LIBEXT_H */

@@ -28,14 +28,13 @@
 #include <private_libext.h>
 
 /* ISO/IEC 9899:2011 K.3.7.4.3 */
-size_t strerrorlen_s(errno_t errnum)
-{
-	size_t ret;
-	char *e;
+size_t strerrorlen_s(errno_t errnum) {
+  size_t ret;
+  char *e;
 
-	ret = 0;
-	e = strerror(errnum);
-	if (e != NULL)
-		ret = strlen(e);
-	return (ret);
+  ret = 0;
+  e = strerror(errnum);
+  if (e != NULL)
+    ret = strlen(e);
+  return (ret);
 }
