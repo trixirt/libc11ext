@@ -68,6 +68,8 @@ if [ x${IS_CLANG} = x1 ]; then
     CFLAGS="$CFLAGS $CLANG_WARNINGS"
 fi
 
+echo "Building libext.a"
+OBJECTS=
 for s in $SOURCES; do
     c=`basename $s`
     b=${c%.*}
@@ -85,7 +87,6 @@ for s in $SOURCES; do
 	fi
     fi
 
-
     cc -c $CFLAGS $s -o $OBJ/$o
     if [ $? != 0 ]; then
 	exit 1
@@ -93,4 +94,53 @@ for s in $SOURCES; do
     if [ ! -f $OBJ/$o ]; then
 	exit 1
     fi
+    OBJECTS="$OBJECTS $OBJ/$o" 
 done
+
+ar cr $LIB/libext.a $OBJECTS
+if [ $? != 0 ]; then
+    exit 1
+fi
+if [ ! -f $LIB/libext.a ]; then
+    exit 1
+fi
+ranlib $LIB/libext.a
+if [ $? != 0 ]; then
+    exit 1
+fi
+SYMBOLS=`nm ../lib/libext.a | grep ' T ' | awk '{ print $3 }' | sort -u`
+ESYMBOLS="abort_handler_s ignore_handler_s memcpy_s memmove_s memset_s \
+set_constraint_handler_s strcat_s strcpy_s strerrorlen_s strerror_s strncat_s \
+strncpy_s strnlen_s strtok_s __throw_constraint_handler_s"
+
+for e in $ESYMBOLS; do
+    err=1
+    for s in $SYMBOLS; do
+	if [ $e = $s ]; then
+	    err=0
+	    break;
+	fi
+    done
+    if [ $err = 1 ]; then
+	echo "Could not find expected symbol $e $LIB/libext.a"
+	exit 1
+    fi
+done
+
+for s in $SYMBOLS; do
+    err=1
+    for e in $ESYMBOLS; do
+	if [ $e = $s ]; then
+	    err=0
+	    break;
+	fi
+    done
+    if [ $err = 1 ]; then
+	echo "Unexpected symbol $s $LIB/libext.a"
+	exit 1
+    fi
+done
+if [ -f $LIB/libext.a ]; then
+    echo "Finished building libext.a"
+fi
+exit 0
