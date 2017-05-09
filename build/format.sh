@@ -34,7 +34,7 @@ TEST=`realpath $HERE/../tests`
 
 S=`find $SRC -name '*.c' -o -name '*.h'`
 I=`find $INC -name '*.h'`
-T=`find $TEST -name '*.c'`
+T=`find $TEST -name '*.c' -o -name '*.h'`
 SOURCES="$S $I $T"
 
 for s in $SOURCES; do
