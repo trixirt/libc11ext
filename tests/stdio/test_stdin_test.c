@@ -30,6 +30,8 @@
 
 #include <atf-c.h>
 
+#include "mock_stdin.h"
+
 /*
  * gets should have been removed from stdio.h
  * declare here
@@ -76,8 +78,32 @@ ATF_TC_BODY(pipe_gets, tc) {
   assert(s == NULL);
 }
 
+ATF_TC_WITHOUT_HEAD(mock_gets);
+ATF_TC_BODY(mock_gets, tc) {
+  char m[16] = "hello\ngoodbye";
+  char r[16] = "";
+  size_t c = strlen(m) + 1;
+  char *s;
+
+  MOCK_STDIN_SETUP();
+  MOCK_STDIN_WRITE(&m[0], c);
+  MOCK_STDIN_CLOSE();
+
+  s = gets(&r[0]);
+  assert(s == &r[0]);
+  assert(strcmp(s, "hello") == 0);
+  r[0] = 0;
+  s = gets(&r[0]);
+  assert(s == &r[0]);
+  assert(feof(stdin) != 0);
+  assert(strcmp(s, "goodbye") == 0);
+  s = gets(&r[0]);
+  assert(s == NULL);
+}
+
 ATF_TP_ADD_TCS(tp) {
   ATF_TP_ADD_TC(tp, pipe_setup);
   ATF_TP_ADD_TC(tp, pipe_gets);
+  ATF_TP_ADD_TC(tp, mock_gets);
   return (atf_no_error());
 }
