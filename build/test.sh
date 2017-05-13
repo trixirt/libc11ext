@@ -64,6 +64,8 @@ fi
 
 # For atf test 
 LDFLAGS="$LDFLAGS -latf-c"
+# For debug version of library
+LDFLAGS_DEBUG="$LDFLAGS -L${LIB} -lext_d"
 # For our library
 LDFLAGS="$LDFLAGS -L${LIB} -lext"
 
@@ -73,12 +75,17 @@ for s in $SOURCES; do
     c=`basename $s`
     b=${c%.*}
     o=$b
+    d=${b}_d
     echo "Building $o"
     cc $CFLAGS $s $LDFLAGS -o $BIN/$o
     if [ $? != 0 ]; then
 	exit 1
     fi
     if [ ! -f $BIN/$o ]; then
+	exit 1
+    fi
+    cc $CFLAGS $s -g -O0 $LDFLAGS_DEBUG -o $BIN/$d
+    if [ $? != 0 ]; then
 	exit 1
     fi
     RUN_TESTS="$RUN_TESTS $BIN/$o"
