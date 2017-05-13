@@ -56,6 +56,10 @@ typedef size_t rsize_t;
 #define RSIZE_MAX (SIZE_MAX >> 1)
 #endif
 
+/* stdio.h */
+/* K.3.5.4.1 */
+char *gets_s(char *, rsize_t);
+
 /* stdlib.h */
 /* K.3.6 */
 typedef void (*constraint_handler_t)(const char *restrict, void *restrict,
