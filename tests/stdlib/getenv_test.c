@@ -60,9 +60,21 @@ ATF_TC_BODY(normal, tc) {
   }
 }
 
+/* empty */
+ATF_TC_WITHOUT_HEAD(empty);
+ATF_TC_BODY(empty, tc) {
+  char *rn = "getenv_test_env_empty=";
+  if (!putenv(rn)) {
+    char *t = getenv("getenv_test_env_empty");
+    assert(t != NULL);
+    assert(strlen(t) == 0);
+  }
+}
+
 ATF_TP_ADD_TCS(tp) {
   ATF_TP_ADD_TC(tp, trash_name);
   ATF_TP_ADD_TC(tp, close_name);
   ATF_TP_ADD_TC(tp, normal);
+  ATF_TP_ADD_TC(tp, empty);
   return (atf_no_error());
 }
